@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,8 +21,13 @@ public class FTPServer {
     private static Socket s;
     private static ServerSocket ss;
 
+    /**
+     * Main method
+     * @param args - Indexes: 0 = port to accept from
+     * @throws FTPException thrown if error is caused at any point, e.g. creating <code>ObjectInputStream</code>
+     * or reading data from <code>ObjectInputStream</code>
+     */
     public static void main(String[] args) throws FTPException {
-
         if (args.length != 0) {
             port = Integer.parseInt(args[0]);
         } else {
@@ -49,9 +53,15 @@ public class FTPServer {
         }
 
         saveData(data);
+        closeSocket();
 
     }
 
+    /**
+     * Opens <code>ServerSocket</code> and <code>Socket</code> for communication with client
+     * @return the <code>Socket</code>
+     * @throws FTPException thrown if error is caused while opening <code>Socket</code>
+     */
     private static Socket openSocket() throws FTPException {
         try {
             ss = new ServerSocket(port);
@@ -61,6 +71,10 @@ public class FTPServer {
         }
     }
 
+    /**
+     * Closes <code>ServerSocket</code>
+     * @throws FTPException thrown if error is caused while closing <code>ServerSocket</code>
+     */
     private static void closeSocket() throws FTPException {
         try {
             ss.close();
@@ -69,6 +83,12 @@ public class FTPServer {
         }
     }
 
+    /**
+     * Saves data from client to <code>File</code>
+     * @param data - <code>FTPFileData</code> to save
+     * @throws FTPException thrown if <code>FileWriter</code> fails to open, writing to file causes an error,
+     * flushing the <code>FileWriter</code>, or closing the <code>FileWriter</code>
+     */
     private static void saveData(FTPFileData data) throws FTPException {
         File file = new File(data.getFilename());
         FileWriter fw;
